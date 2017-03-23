@@ -4,12 +4,16 @@ MAINTAINER Nuxeo <packagers@nuxeo.com>
 
 # install java
 RUN yum install -y \
-       java-1.8.0-openjdk 
+       java-1.8.0-openjdk \
+    && yum clean all
 
 # install wget
-RUN yum -y install wget 
+RUN yum -y install wget \
+    && yum clean all
+
 # install unzip
-RUN yum -y install unzip 
+RUN yum -y install unzip \
+    && yum clean all
 
 
 # Create Nuxeo user
@@ -20,26 +24,29 @@ RUN useradd -m -d /home/$NUXEO_USER -s /bin/bash $NUXEO_USER
 RUN wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
     && rpm -Uvh epel-release-latest-7*.rpm \
     && rpm --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro \
-    && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-1.el7.nux.noarch.rpm
+    && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-1.el7.nux.noarch.rpm \
+    && yum clean all
 
 ## must find another way to install it, need it for ffmpeg
-RUN rpm -Uvh ftp://ftp.pbone.net/mirror/li.nux.ro/download/nux/dextop/retired/libfribidi-0.19.2-3.el7.nux.x86_64.rpm
+RUN rpm -Uvh ftp://ftp.pbone.net/mirror/li.nux.ro/download/nux/dextop/retired/libfribidi-0.19.2-3.el7.nux.x86_64.rpm \
+    && yum clean all
 
 # enable repo for libreoffice
 RUN yum-config-manager --enable rhel-7-server-optional-rpms
 # Add needed convert tools
 RUN yum -y upgrade && yum -y install \
-    perl \
-    ImageMagick \
-    ffmpeg \
-    ffmpeg2theora \
-    ufraw \
-    poppler-utils \
-    libreoffice-headless  \
-    libwpd-tools \
-    perl-Image-ExifTool \
-    ghostscript \
- && rm -rf /var/lib/apt/lists/*
+        perl \
+        ImageMagick \
+        ffmpeg \
+        ffmpeg2theora \
+        ufraw \
+        poppler-utils \
+        libreoffice-headless  \
+        libwpd-tools \
+        perl-Image-ExifTool \
+        ghostscript \
+    && rm -rf /var/lib/apt/lists/* \
+    && yum clean all
 
 ENV NUXEO_VERSION 8.10
 ENV NUXEO_MD5 29e67a19bba54099093b51d892926be1
@@ -78,5 +85,3 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 EXPOSE 8080
 EXPOSE 8787
 CMD ["nuxeoctl","console"]
-
-
