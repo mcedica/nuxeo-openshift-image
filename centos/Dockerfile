@@ -4,11 +4,12 @@ MAINTAINER Nuxeo <packagers@nuxeo.com>
 
 # install java
 RUN yum install -y \
-       java-1.8.0-openjdk 
+       java-1.8.0-openjdk \
+    && yum clean all
 
 # install wget
-RUN yum -y install wget 
-
+RUN yum -y install wget \
+    && yum clean all
 
 # Create Nuxeo user
 ENV NUXEO_USER nuxeo
@@ -17,21 +18,23 @@ RUN useradd -m -d /home/$NUXEO_USER -s /bin/bash $NUXEO_USER
 #Add repositories need it for ffmpeg2theora and ffmpeg
 RUN yum -y install epel-release \
     && rpm --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro \
-    && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-1.el7.nux.noarch.rpm
+    && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-1.el7.nux.noarch.rpm \
+    && yum clean all
 
 # Add needed convert tools
 RUN yum -y upgrade && yum -y install \
-    perl \
-    ImageMagick \
-    ffmpeg \
-    ffmpeg2theora \
-    ufraw \
-    poppler-utils \
-    libreoffice \
-    libwpd-tools \
-    perl-Image-ExifTool \
-    ghostscript \
- && rm -rf /var/lib/apt/lists/*
+        perl \
+        ImageMagick \
+        ffmpeg \
+        ffmpeg2theora \
+        ufraw \
+        poppler-utils \
+        libreoffice \
+        libwpd-tools \
+        perl-Image-ExifTool \
+        ghostscript \
+    && rm -rf /var/lib/apt/lists/* \
+    && yum clean all
 
 ENV NUXEO_VERSION 8.10
 ENV NUXEO_MD5 29e67a19bba54099093b51d892926be1
@@ -70,4 +73,3 @@ EXPOSE 8080
 EXPOSE 8787
 CMD ["nuxeoctl","console"]
 USER nuxeo
-
